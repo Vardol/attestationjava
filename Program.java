@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.LinkedList;
+
 // Необходимо написать программу – розыгрыша игрушек в магазине детских товаров.
 // Стараемся применять ООП и работу с файлами.
 // Если какой-то пункт не изучали и не знаете, как сделать, то можете сделать своим способом. Например, у кого в курсе не было ООП, то применяем списки\массивы\словари
@@ -23,6 +26,17 @@
 
 public class Program {
     public static void main(String[] args) {
+        Toy robot = new Toy("Робот", 10, 100, "Классный робот");
+        Toy doll = new Toy("Кукла", 20, 100, "Барби");
+        Toy lego = new Toy("Лего", 10, 100, "Лего Звездные воины!");
+        
+        robot.addTag("Мальчикам");
+        doll.addTag("Девочкам");
+        lego.addTag("Мальчикам");
+        
+        System.out.println(robot);
+        System.out.println(lego);
+        System.out.println(doll);
 
     }
 
