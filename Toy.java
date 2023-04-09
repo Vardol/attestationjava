@@ -1,6 +1,4 @@
-import java.util.LinkedList;
 import java.util.UUID;
-import java.lang.Math;
 
 public class Toy {
     protected String id;
@@ -54,14 +52,10 @@ public class Toy {
         this.chance = chance;
     }
 
-    protected LinkedList<String> tags; //список тэгов для товара, для поиска по критериям
-    public LinkedList<String> getTags() {
-        return tags;
-    }
-
     // полный конструктор - без вероятности, т.к. за нее отвечает хэндлер розыгрыша
-    public Toy(String name, int amount, int price, String description, LinkedList<String> tags) {
+    public Toy(String name, int amount, int price, String description) {
         this.id = UUID.randomUUID().toString();
+
         if (name == null || name.isBlank()) {
             System.out.println("Empty name. Using default name.");
             this.name = "default";
@@ -80,57 +74,74 @@ public class Toy {
         }
         else {this.price = price;}
 
+        this.chance = 0;
+
         if (description == null) {this.description = "";}
         else {this.description = description;}
-
-        if (tags == null) {this.tags = new LinkedList<String>();}
-        else {this.tags = new LinkedList<String>(tags);}
     }
 
-    // конструктор без описания и без тэгов
-    public Toy(String name, int amount, int price) {
-        this(name, amount, price, "", null);
+
+    //Приватный конструктор для формирования Toy со считанным извне id и chance и без проверок - для парсера.
+    private Toy(String id, String name, int amount, int price, double chance, String description) {
+        this.id = id;
+
+        this.name = name;
+
+        this.amount = amount;
+
+        this.price = price;
+
+        this.chance = 0;
+
+        this.description = description;
     }
 
     // конструктор без описания
-    public Toy(String name, int amount, int price, LinkedList<String> tags) {
-        this(name, amount, price, "", tags);
+    public Toy(String name, int amount, int price) {
+        this(name, amount, price, "нет описания");
     }
 
-    // конструктор без тэгов
-    public Toy(String name, int amount, int price, String description) {
-        this(name, amount, price, description, null);
-    }
-
-    // конструктор без описания и без цены и без тэгов
+    // конструктор без описания и без цены
     public Toy(String name, int amount) throws Exception {
-        this(name, amount, 1, "", null);
+        this(name, amount, 0, "нет описания");
     }
 
-    // конструктор без цены и без тэгов
+    // конструктор без цены
     public Toy(String name, int amount, String description) {
-        this(name, amount, 1, description, null);
+        this(name, amount, 0, description);
     }
 
-    //TODO: подумать надо ли конструкторы в других вариантах
-
-
-
-    public boolean addTag(String tag){
-        return this.tags.add(tag);
-    }
-
-    public boolean removeTag(String tag){
-        return this.tags.remove(tag);
+    public static Toy parseToy(String input){
+        String[] inputArray = input.split(";");
+        Toy result = new Toy(inputArray[0],inputArray[1],Integer.parseInt(inputArray[2]),
+        Integer.parseInt(inputArray[3]),Double.parseDouble(inputArray[4]),inputArray[5]);
+        return result;
     }
 
     @Override
     public String toString(){
         String result = "";
-        return result.concat("<").concat(this.id).concat("> ").concat(this.name).concat(" остаток: ")
-        .concat(Integer.toString(this.amount)).concat("шт., цена:").concat(Integer.toString(this.price)).
-        concat("руб., вероятность выпадения: ").concat(Double.toString((Math.floor(chance*100)))).
-        concat("%, тэги игрушки: ").concat(this.tags.toString()).concat("\nОписание: ").concat(this.description);
+        return result.concat(this.id).concat(";").concat(this.name).concat(";")
+        .concat(Integer.toString(this.amount)).concat(";").concat(Integer.toString(this.price))
+        .concat(";").concat(Double.toString(chance)).concat(";").concat(this.description).concat(";\n");
     }
 
+    @Override
+    public boolean equals(Object o) {
+
+        // сравниваем с собой 
+        if (o == this) {
+            return true;
+        }
+ 
+        // проверяем является ли о - объектом класса Toy
+        if (!(o instanceof Toy)) {
+            return false;
+        }
+
+        Toy t = (Toy)o;
+
+        // сравниваем по ID
+        return t.getId().equals(this.id);
+    }
 }

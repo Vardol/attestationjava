@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.LinkedList;
 
 // Необходимо написать программу – розыгрыша игрушек в магазине детских товаров.
@@ -25,19 +24,48 @@ import java.util.LinkedList;
 
 
 public class Program {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
+
+        //генерим игрушки)
         Toy robot = new Toy("Робот", 10, 100, "Классный робот");
         Toy doll = new Toy("Кукла", 20, 100, "Барби");
         Toy lego = new Toy("Лего", 10, 100, "Лего Звездные воины!");
+
+
+        FileHandler fileHandler = new FileHandler("toys.txt");
+
+        // добавляем созданные игрушки в базу (файл)
+        fileHandler.addToy(lego);
+        fileHandler.addToy(doll);
+        fileHandler.addToy(robot);
+
+        //расставляем вероятности
+        //вероятности можно расставить вручную через setter
+        PrizeHandler.setChances(fileHandler);
+
+        //вывод всех данных
+        System.out.println(fileHandler.getToys());
+
+        //получаем список id на лотерею в запрошенном количестве, например - 5. И выводим его
+        LinkedList<String> prizeList = PrizeHandler.generatePrizeList(fileHandler, 5);
+        System.out.println();
+        System.out.println("Спиок на лотерею:");
+        System.out.println(prizeList);
+
+
+        //отдаем игрушку, первую в списке призов
+        fileHandler.giveToyId(prizeList.pop());
+        System.out.println();
+        System.out.println("Отдали одну игрушку из списка на лотерею");
+        System.out.println(fileHandler.getToys());
+
         
-        robot.addTag("Мальчикам");
-        doll.addTag("Девочкам");
-        lego.addTag("Мальчикам");
-        
-        System.out.println(robot);
-        System.out.println(lego);
-        System.out.println(doll);
+        //можно поменять параметры по id и записать новые данные
+        //fileHandler.fetchToyById("f8e1a998-675b-4660-90d7-a951ad5b546a").setAmount(100);;
+        //fileHandler.writeData();
+
+        //очищаем файл для новых экспериментов
+        fileHandler.clearAllData();
 
     }
-
 }
